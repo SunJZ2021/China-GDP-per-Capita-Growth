@@ -1,0 +1,115 @@
+---
+title: "Factors Affecting GDP Per Capita"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r echo=FALSE}
+library(readxl)
+library(MASS)
+library(ggplot2)
+gdp <- read_excel("Factors_Affecting_GDP_per_Capita.xlsx", sheet = "Sheet1")
+attach(gdp)
+```
+The correlation coefficient between financial development level and GDP per Capita:
+```{r echo=FALSE}
+cor(FDL,GDPPC)
+```
+
+The correlation coefficient between expenditure and GDP per Capita:
+```{r echo=FALSE}
+cor(FE,GDPPC)
+```
+
+The correlation coefficient between urbanization rate and GDP per Capita:
+```{r echo=FALSE}
+cor(UR,GDPPC)
+```
+
+The correlation coefficient between opening level and GDP per Capita:
+```{r echo=FALSE}
+cor(OL,GDPPC)
+```
+
+The correlation coefficient between traffic infrastructure level and GDP per Capita:
+```{r echo=FALSE}
+cor(TIL,GDPPC)
+```
+
+The correlation coefficient between proportion of employed persons and GDP per Capita:
+```{r echo=FALSE}
+cor(POEP,GDPPC)
+```
+
+The correlation coefficient between added value of primary industry and GDP per Capita:
+```{r echo=FALSE}
+cor(AVOPI,GDPPC)
+```
+
+The correlation coefficient between added value of secondary industry and GDP per Capita:
+```{r echo=FALSE}
+cor(AVOSI,GDPPC)
+```
+
+The correlation coefficient between added value of tertiary industry and GDP per Capita:
+```{r echo=FALSE}
+cor(AVOTI,GDPPC)
+```
+
+The correlation coefficient between investment level of fixed assets and GDP per Capita:
+```{r echo=FALSE}
+cor(ILOFA,GDPPC)
+```
+
+```{r echo=FALSE}
+par(mfrow=c(2,5))
+plot(FDL,GDPPC)
+plot(FE,GDPPC)
+plot(UR,GDPPC)
+plot(OL,GDPPC)
+plot(TIL,GDPPC)
+plot(POEP,GDPPC)
+plot(AVOPI,GDPPC)
+plot(AVOSI,GDPPC)
+plot(AVOTI,GDPPC)
+plot(ILOFA,GDPPC)
+```
+
+```{r echo=TRUE}
+lm_f <- lm(GDPPC~FDL+FE+UR+OL+TIL+POEP+AVOPI+AVOSI+AVOTI+ILOFA)
+summary(lm_f)
+```
+
+```{r echo=FALSE}
+par(mfrow=c(1,3))
+evals <- stdres(lm_f)
+hist(evals)
+qqnorm(evals)
+abline(0,1)
+plot(fitted(lm_f),evals)
+ks.test(evals,pnorm,0,1)
+```
+
+```{r echo=TRUE}
+lm_r <- lm(GDPPC~FE+TIL+POEP)
+summary(lm_r)
+```
+
+```{r echo=FALSE}
+gdp_fitted <- data.frame(YEAR,GDPPC,
+                         predict.lm(lm_r,interval="confidence",level=0.95))
+ggplot(data=gdp_fitted, mapping=aes(x=YEAR))+
+  geom_ribbon(aes(ymin=lwr,ymax=upr,fill="95% Confidence \nInterval of the \nfitted values"))+
+  scale_fill_manual(values=c("grey"))+
+  geom_line(aes(y=fit, color = "Fitted Values"))+
+  geom_line(aes(y=GDPPC, color="Actual Values"),size=1)+
+  theme_bw()+
+  labs(x="Year", y="GDP Per Capita")+
+  theme(legend.title = element_blank())
+```
+
