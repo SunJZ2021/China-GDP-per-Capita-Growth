@@ -1,4 +1,4 @@
-# Reasons for GDP per Capita growth of China
+# Reasons for GDP per Capita growth of China (drafted)
 
 Regression analysis is a commonly used method in economic forecasting. This work takes the study of reasons for GDP per Capita growth of China as an example: 
 
